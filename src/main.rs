@@ -12,16 +12,13 @@ fn main() {
         .output()
         .unwrap();
     
-    if output.status.success() {
-        let std_out = std::str::from_utf8(&output.stdout).unwrap();
-        if std_out.len() > 0 {
-            print!("{}", std_out);
-        }
-        let std_err = std::str::from_utf8(&output.stderr).unwrap();
-        if std_err.len() > 0 {
-            print!("{}", std_err);
-        }
-    } else {
-        std::process::exit(1);
+    let std_out = std::str::from_utf8(&output.stdout).unwrap();
+    print!("{}", std_out);
+    let std_err = std::str::from_utf8(&output.stderr).unwrap();
+    print!("{}", std_err);
+
+    match output.status.code() {
+        Some(code) => std::process::exit(code),
+        None => std::process::exit(1)
     }
 }

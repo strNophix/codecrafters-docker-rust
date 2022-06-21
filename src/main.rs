@@ -14,9 +14,13 @@ fn main() {
     
     if output.status.success() {
         let std_out = std::str::from_utf8(&output.stdout).unwrap();
-        print!("{}", std_out);
+        if std_out.len() > 0 {
+            println!("{}", std_out);
+        }
         let std_err = std::str::from_utf8(&output.stderr).unwrap();
-        print!("{}", std_err);
+        if std_err.len() > 0 {
+            println!("{}", std_err);
+        }
     } else {
         std::process::exit(1);
     }

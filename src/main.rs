@@ -15,7 +15,7 @@ fn main() {
     let std_out = std::str::from_utf8(&output.stdout).unwrap();
     print!("{}", std_out);
     let std_err = std::str::from_utf8(&output.stderr).unwrap();
-    print!("{}", std_err);
+    eprint!("{}", std_err);
 
     match output.status.code() {
         Some(code) => std::process::exit(code),

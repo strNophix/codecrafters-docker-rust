@@ -29,6 +29,10 @@ fn main() {
     // ensure that directory changed to root of jail
     std::env::set_current_dir("/").expect("Failed to change to root dir");
 
+    unsafe {
+        libc::unshare(libc::CLONE_NEWPID);
+    }
+
     let output = std::process::Command::new(command)
         .args(command_args)
         .output()

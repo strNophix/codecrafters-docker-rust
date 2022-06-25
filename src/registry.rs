@@ -79,14 +79,14 @@ pub struct ImageIdentifier {
 
 impl ImageIdentifier {
     pub fn from_string(image: &String) -> Self {
-        let mut iter = image.rsplitn(2, ':');
-        let tag = iter.next().unwrap_or("latest").to_string();
+        let mut iter = image.splitn(2, ':');
         let mut loc_iter = iter.next().unwrap().split('/').rev();
         let name = loc_iter
             .next()
             .expect("No image name was supplied")
             .to_string();
         let author = loc_iter.next().unwrap_or("library").to_string();
+        let tag = iter.next().unwrap_or("latest").to_string();
         return ImageIdentifier { author, name, tag };
     }
 }

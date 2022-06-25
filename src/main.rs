@@ -1,17 +1,23 @@
 use std::{self, ffi::CString, path};
 
+mod registry;
+
 // Usage: your_docker.sh run <image> <command> <arg1> <arg2> ...
 fn main() {
     let args: Vec<_> = std::env::args().collect();
+    let image_name = &args[2];
     let command = &args[3];
     let command_args = &args[4..];
 
-    let base = "/tmp/mydocker";
-    let base_path = path::Path::new(base);
+    let base_path = std::env::temp_dir().join("mydocker");
 
     // prevent cryptic "no such file or directory" error inside chroot
     std::fs::create_dir_all(base_path.join("dev")).unwrap();
     std::fs::File::create(base_path.join("dev/null")).unwrap();
+
+    let image = registry::ImageIdentifier::from_string(image_name);
+    let mut reg = registry::Registry::default();
+    reg.pull(&image, base_path.to_str().unwrap());
 
     // copy over binary into chroot
     let command_path = path::Path::new(command).strip_prefix("/").unwrap();
@@ -21,7 +27,7 @@ fn main() {
         .expect("Failed copying executed binary to chroot directory");
 
     // create and change into chroot
-    let cbase_path = CString::new(base.to_owned()).unwrap();
+    let cbase_path = CString::new(base_path.to_str().unwrap().to_owned()).unwrap();
     unsafe {
         libc::chroot(cbase_path.as_ptr());
     }
@@ -43,8 +49,5 @@ fn main() {
     let std_err = std::str::from_utf8(&output.stderr).unwrap();
     eprint!("{}", std_err);
 
-    match output.status.code() {
-        Some(code) => std::process::exit(code),
-        None => std::process::exit(1),
-    }
+    std::process::exit(output.status.code().unwrap_or(1));
 }

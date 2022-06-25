@@ -1,4 +1,4 @@
-// TODO: Enable derive feature
+// TODO: Enable derive feature and convert dynamic to typed json
 
 pub struct Registry {
     http_client: reqwest::blocking::Client,
@@ -60,7 +60,7 @@ impl Registry {
             let layer_path = temp_path.join(digest);
             std::fs::write(layer_path.to_owned(), blob).unwrap();
 
-            // TODO: handle exit code of untar
+            // TODO: handle exit code
             std::process::Command::new("tar")
                 .args(["-xf", layer_path.to_str().unwrap(), "-C", destination])
                 .output()

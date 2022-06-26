@@ -71,6 +71,7 @@ impl Registry {
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub struct ImageIdentifier {
     author: String,
     name: String,
@@ -88,5 +89,49 @@ impl ImageIdentifier {
         let author = loc_iter.next().unwrap_or("library").to_string();
         let tag = iter.next().unwrap_or("latest").to_string();
         return ImageIdentifier { author, name, tag };
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_image_name() {
+        assert_eq!(
+            ImageIdentifier::from_string(&"library/ubuntu:latest".to_string()),
+            ImageIdentifier {
+                author: "library".to_string(),
+                name: "ubuntu".to_string(),
+                tag: "latest".to_string()
+            }
+        );
+
+        assert_eq!(
+            ImageIdentifier::from_string(&"alpine".to_string()),
+            ImageIdentifier {
+                author: "library".to_string(),
+                name: "alpine".to_string(),
+                tag: "latest".to_string()
+            }
+        );
+
+        assert_eq!(
+            ImageIdentifier::from_string(&"ghcr.io/dusk-labs/dim:dev".to_string()),
+            ImageIdentifier {
+                author: "dusk-labs".to_string(),
+                name: "dim".to_string(),
+                tag: "dev".to_string()
+            }
+        );
+
+        assert_eq!(
+            ImageIdentifier::from_string(&"bitnami/redis:7.0".to_string()),
+            ImageIdentifier {
+                author: "bitnami".to_string(),
+                name: "redis".to_string(),
+                tag: "7.0".to_string()
+            }
+        );
     }
 }

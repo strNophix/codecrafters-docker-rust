@@ -3,7 +3,6 @@ My code for CodeCrafter's ["Build Your Own Docker" Challenge](https://codecrafte
 
 ## Requirements
 - docker
-- tar
 
 ## Getting started
 ```sh
